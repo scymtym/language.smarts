@@ -1,0 +1,494 @@
+* Todo
+
+** TODO Recursive
+
+** TODO What is a lone pair?
+
+** DONE Second logical and operator?
+
+   They differ in precedence.
+
+** DONE What is the lambda stuff about?
+
+   A cando extension. Not relevant for now.
+
+* Metamodel
+
+  #+BEGIN_SRC plantuml :file figures/metamodel.png
+    @startuml
+    class Node
+
+    class ResidueList
+
+    Node <|-- RootMatch
+
+    Node <|-- BondMatch
+    BondMatch <|-- AtomOrBondMatch
+    Node <|-- BondListMatch
+
+    AtomOrBondMatch <|-- Logical
+
+    AtomOrBondMatch <|-- TagSet
+
+    AtomOrBondMatch <|-- RingTest
+
+    AtomOrBondMatch <|-- ResidueTest
+
+    BondMatch <|-- BondTest
+
+    AtomOrBondMatch <|-- AtomTest
+
+    BondListMatch <|-- Chain
+
+    BondListMatch <|-- Branch
+
+    RootMatch <|-- AfterMatchBond
+
+    AtomOrBondMatch <|-- Root
+
+    Root <|-- SMARTSRoot
+    @enduml
+  #+END_SRC
+
+  [[file:figures/metamodel.png]]
+
+* References
+
+  + https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system (SMILES)
+
+  + https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification (SMARTS)
+
+  + https://docs.eyesopen.com/toolkits/cpp/oechemtk/SMARTS.html
+
+  + http://www.daylight.com/cheminformatics/index.html
+
+  + http://www.daylight.com/dayhtml/doc/theory/index.pdf
+
+* Current Implementation
+
+** Meta Model
+
+   + https://github.com/drmeister/cando/blob/dev/include/cando/chem/chemInfo.h#L1
+
+** YACC Parser
+
+  + https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.cc#L1
+
+  + https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.yy#L1
+
+* Notes
+
+** Raw #clasp 2018-03-17
+
+   #+BEGIN_EXAMPLE
+   <scymtym> drmeister: do you need anything in particular for (1)?  [16:13]
+   <drmeister> Would you be interested in assisting or writing a kind of
+            complicated parser for the SMARTS language?  [16:15]
+   <drmeister> I have an existing yacc parser and there is plenty of literature
+            online describing it.
+   <drmeister> No need to tell me right away - but yes - we need a SMARTS parser
+            written in esrap.
+   <scymtym> could be interesting. do you need it quickly?  [16:16]
+   <drmeister> I can provide support for developing it.
+   <drmeister> No not quickly.  We can keep moving forward with the yacc parser
+            running in boehm.  [16:17]
+   <drmeister> What kind of timeline is comfortable for you?
+   <scymtym> the "no promises" kind
+   <drmeister> Got it.
+   <drmeister> Here - take a look at this - this might help...  [16:18]
+   <scymtym> more seriously though, i would be doing this in my free time and i
+          don't know yet how much work it would be
+   <drmeister> In no particular
+            order...https://docs.eyesopen.com/toolkits/cpp/oechemtk/SMARTS.html
+                                                                        [16:19]
+   <scymtym> compared to, say, python, is the language more complicated?
+   <drmeister>
+            https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification
+   <drmeister> It's more like regular expressions
+   <drmeister> It's not a programming language
+   <scymtym> i see  [16:20]
+   <drmeister> There are three names SMILES, SMARTS, SMIRKS
+   <drmeister> SMILES is a way of defining molecular structures using strings.
+   <drmeister> SMARTS extends SMILES to generate pattern recognizers for
+            molecular fragments.
+   <drmeister> SMIRKS extends this to recognizing chemical reactions.
+   <scymtym> interesting  [16:21]
+   <drmeister> We need a subset of SMIRKS/superset of SMARTS.
+   <scymtym> do you already have a domain model and a corresponding
+          implementation instances of which the parser would build?
+   <drmeister> Basically SMARTS is for recognizing patterns and SMIRKS adds the
+            ability to save and label atoms that are part of the pattern so
+            that you can query the match and get the atoms back out.
+                                                                        [16:22]
+   <drmeister> domain model?
+   <drmeister> We have a yacc parser.
+   <drmeister>
+            https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.cc#L1
+                                                                        [16:23]
+   <Bike> there are instances, right? i saw them before.
+   <drmeister> Oh wayt
+   <drmeister> wait
+   <Bike> jesus, yacc is as shit as i remembered
+   <drmeister>
+            https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.yy#L1
+   <scymtym> i mean a set of CLOS (or C++) classes for representing SMILES,
+          SMARTS, SMIRKS concepts
+   <Bike> stuff to parse to  [16:24]
+   <Bike> i forget where they went though
+   <drmeister> Oh yeah - they aren't super tidy - but they do the job.   I wanted
+            to clean them up and bring them into the modern era with this
+            rewrite of the SMARTS parser.
+   <drmeister> I can do that.
+   <drmeister> Hang on...
+   <drmeister>
+            https://github.com/drmeister/cando/blob/dev/include/cando/chem/chemInfo.h#L1
+   <Bike> oh yeah there they are. SmartsRoot, Chain, branch, BondTest, yada yada
+   <drmeister> Those are all of the classes that implement the domain model.
+   <drmeister> They are mostly exposed to Cando Common Lisp.  [16:25]
+   <scymtym> yeah, that's what i meant
+   <scymtym> ok, that should suffice to get an impression
+   <drmeister> The messy bits are that I have one class (AtomTest_O) that does a
+            lot more than it should and it should be subclassed for different
+            tests.
+   <drmeister> These  classes implement code that test atoms to see if they are
+            particular elements, have certain hybridization, charge whatever.
+                                                                        [16:26]
+   <scymtym> that will make more sense to me after looking at your links, i hope
+                                                                        [16:27]
+   <scymtym> i will do that and tell you what i think later, if that's ok
+   <drmeister> Or there is the Logical_O class that does all logical tests -
+            there should be subclasses that do them for HighPrecedenceAnd, Or,
+            LowPrecedenceAnd, Not   etc.  [16:28]
+   <Bike> smarts is also a specified thing, like it's got a wikipedia article
+          with syntax and such.
+   <scymtym> that's always nice
+   <Bike> it's kind of like regexes but for graphs.
+   <drmeister> scymtym: Sure - no problem.
+   <Bike> which is less nice
+   <Bike> well, the article on SMILES is better. smarts is like smiles plus
+          replacements, as far as i understand  [16:29]
+   <drmeister> It's super powerful and useful.   It's one of Cando's super
+            powers.
+   <drmeister> I'll get you a few more links - there is one that is super clear -
+            I'm looking for it.
+   <scymtym> Bike: otoh, there may be some takeaways for compiler writers, then
+   <drmeister>
+            https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification
+   <Bike> mm, i'm sure. you know about cool stuff like regex NFAs and stuff
+                                                                        [16:30]
+   <drmeister> This specification was developed by a company called "Openeye"
+   <Bike> i have a book on the theory of graph grammars, but i've only glanced
+          through it
+   <drmeister> http://www.daylight.com/cheminformatics/index.html
+   <Bike> doesn't seem to be as nice as for strings
+   <drmeister> This is the best guide - this pdf  [16:31]
+   <drmeister> http://www.daylight.com/dayhtml/doc/theory/index.pdf
+   <drmeister> The thing that my bison/yacc parser doesn't do properly is label
+            atoms - I came up with a different syntax.
+   <drmeister> Proper SMARTS uses [C:1][C:2]  to indicate two carbons connected
+            to each other and the first will be labeled '1' and the second '2'
+                                                                        [16:32]
+   <drmeister> I use C1C2  to do the same thing.
+   <drmeister> I want to change to [C:1][C:2]
+   <drmeister> My parser implements almost all of the [] atom tests however.
+            Just not the #\: labeling operator.  [16:33]
+   <drmeister> If you have any questions about the chemistry involved in all of
+            this just ask.  [16:34]
+   <scymtym> drmeister: sure. and i will add your last remarks to my notes. the
+          links seem like a better starting point  [16:35]
+   <drmeister> We don't need to support Reaction Queries at this point so section
+            4.6 and section 5 aren't important at this point.
+   <drmeister> Also, since SMARTS is a superset of SMILES - if we could also
+            parse SMILES and generate a different domain model - that would
+            make the code much more powerful.  [16:37]
+   <drmeister> SMARTS would generate those chemInfo.h classes and SMILES would
+            generate a different set of classes that would build molecules.
+                                                                        [16:38]
+   <drmeister> Since esrap separates the parser from the builder - it should be
+            straightforward to do that.  [16:39]
+   <scymtym> would generate /instances/ of those classes, right? sorry if this
+          comes across pedantic but i need to understand things in those terms
+                                                                        [16:40]
+   <drmeister> Yes.
+   <drmeister> We already expose almost everything you would need to generate
+            instances of those classes.
+   <scymtym> generally, i would separate the grammar from the builder and the
+          model, yes  [16:41]
+   <drmeister> We could even rewrite those classes so that they are in Common
+            Lisp.
+   <scymtym> using the builder approach, that decision can be delayed to some
+          extent  [16:42]
+   <drmeister> They simply call other Cando exposed code to query atom properties
+            and bond properties.
+   <drmeister> Right.
+   <drmeister> Back when I wrote this stuff I was exposing it to Python - I would
+            never think of doing this pattern matching in Python - it would
+            have serious performance issues.  [16:43]
+   <scymtym> i don't know how to phrase this politely, but maybe, before you
+          spend more effort explaining more aspects, let me have a look
+   <drmeister> But in compiled Common Lisp it would be no problem.
+   <drmeister> No problem  :-)
+   #+END_EXAMPLE
+
+** Raw #clasp 2018-03-19
+
+   #+BEGIN_EXAMPLE
+   <scymtym> drmeister: the SMILES/SMARTS material you provided doesn't seem too
+          complicated. so far, the main difficulties seem to be handling the
+          separation into SMILES and SMARTS intelligently and managing the
+          apparently numerous variants and extensions  [12:34]
+   <drmeister> scymtym: Agreed - but that would be gravy - I don't implement
+            SMILES at the moment.  SMARTS is the really important capability.
+                                                                        [12:46]
+   <drmeister> Hello
+   * drmeister likes names like SMILES and SMARTS but draws the line at SMIRKS.
+                                                                        [12:47]
+   <drmeister> Bike: Now that other people are working on the ld crashing issue I
+            rebuilt cst with your partial inlining turned on and reproduced
+            the STORE issue.  [12:48]
+   <drmeister> Let's talk about it after my class.
+   <drmeister> Shiho and Bike:  I found some PDF's on the Shrodinger web site
+            that describe their user interface for setting up these FEP
+            calculations.  [12:50]
+   <drmeister> It's the typical pointy-clicky-menu-dialog GUI that drives me
+            nuts.    I think we can do a much better job with the Jupyter
+            Notebook interface.  [12:51]
+   <drmeister>
+            https://usercontent.irccloud-cdn.com/file/mnUrvkMh/fep_bace1_2018-1.pdf
+   <drmeister> I figure if they publish it on their web site then it is fair game
+            for us to look at it.  [12:52]
+   <drmeister> There's not much to learn from it anyway - it's more about what to
+            avoid.
+   <scymtym> drmeister: i see. a basic parser for SMARTS shouldn't be too much
+          work, then. i mean, i seem to have most(?) of it, from playing
+          around while learning how the languages work  [13:02]
+   <scymtym> the fragmented specifications make it hard to get a complete picture
+                                                                        [13:03]
+   <drmeister> Yeah - the tricky part is turning it into the model. I have a
+            yacc/bison parser that does it. I posted a link and I can repost
+            it if you like.  [13:07]
+   <drmeister> But it needs Cando
+   <scymtym> i have that in my notes  [13:08]
+   <drmeister> That code is c++ and more convoluted than it needs to be.   [13:09]
+   <scymtym> my thinking at the moment is having the parser and maybe generic
+          language support in a separate system and having a suitable builder
+          in cando. does that make sense?
+   <drmeister> Some - the parser needs the model building to be useful.  [13:12]
+   <drmeister> I have to prepare for teaching. I’ll be more available to talk
+            after a couple of hours.  [13:13]
+   <drmeister> But since ideally we want one parser and two model generators -
+            yeah I think it makes a lot of sense to have the parser in its own
+            system.  [13:14]
+   <scymtym> ok  [13:17]
+   <Bike> good meowrning  [13:42]
+   <scymtym> hi Bike  [13:43]
+   <Bike> i think you're right that the smarts parser should be its own system,
+          by the way. surely whatever it parses into can be useful even without
+          extra info from cando  [13:44]
+   <scymtym> yes. in my experience, when dealing with languages, it is best to
+          put some effort into cleanly separating the components. this helps
+          things like editor support and whatnot easier and it makes
+          development and debugging easier  [13:46]
+   <scymtym> Bike: do you happen to know whether the "two model generators"
+          mentioned above also implies restricting the parser to only accept
+          SMILES for one of them?  [13:48]
+   <Bike> I don't know. But that does sound useful.
+   <scymtym> to me as well. but keeping the two separate is not always easy since
+          everything is a bit tangled. i'm trying to decide whether it is
+          worth the effort  [13:50]
+   #+END_EXAMPLE
+
+** Raw #clasp 2018-03-24
+
+   #+BEGIN_EXAMPLE
+   <scymtym> drmeister: unrelatedly, i think i have pretty good understanding of
+          SMILES and SMARTS now. the most important thing i couldn't
+          completely figure out, neither from your parser nor from the
+          specifications, is how complex descriptions of atoms are supposed to
+          interact with the [] construct  [16:14]
+   <drmeister> Could you give me an example?   My understanding is the [...]
+            construct applies a bunch of tests to an atom.  [16:15]
+   <scymtym> i.e. can i just pile up a bunch of modifiers like CH4-2@@ or this
+          only allowed within [] as in [CH4-2@@]?
+   <drmeister> It's only allowed within a []  [16:16]
+   <drmeister> My understanding is only the simplest element tests can be
+            expressed outside of a [...]
+   <scymtym> that is my impression as well
+   <drmeister> Anything more complex than say 'C' must be put in square brackets.
+   <scymtym> but within [], multiple complex description can be connected by
+          logical operators without individual []s, like [C++;C@@], right?
+                                                                        [16:17]
+   <drmeister> Yes.
+   <scymtym> and the order of the things i called "modifiers" such as "-4" or
+          "H3" or @ doesn't matter?  [16:18]
+   <drmeister> No, I don't think so.   The [] match test returns true or false,
+            the order of tests within it shouldn't matter and the tests
+            shouldn't fail.  [16:20]
+   <drmeister> They shouldn't error I mean.
+   <scymtym> ok  [16:21]
+   <drmeister> Those tests mean "the atom has a -4 charge"; H3 "The atom has 3
+            hydrogens attached"; @ "The atom has S stereochemistry".
+                                                                        [16:22]
+   <drmeister> Atoms either have these properties or they don't.  [16:23]
+   <drmeister> It doesn't matter what order you test them.
+   <scymtym> yes, i understand the semantics, i was trying to figure out the
+          exact syntax so the parser can follow the specification  [16:24]
+   <scymtym> precision doesn't seem to be the strong suite of the specification
+          material i have read so far, though
+   <drmeister> It's written by chemists.
+   <scymtym> ok, i should have said "precision in the formal languages
+          department" since i can't really judge the chemistry part, of course
+                                                                        [16:26]
+   <drmeister> Yeah - you have to read several documents on it to piece it
+            together.  There is the reference standard in the OpenEye software
+            - but I don't want to use that.  [16:27]
+   <scymtym> and finally, can i assume that things like APLambda that don't seem
+          to appear in the specifications are cando extensions?
+   <drmeister> I'm open source.
+   <drmeister> Yeah - that's mine - I wanted to inject arbitrary Common Lisp code
+            to do tests - but that is really old.  You could drop that out.
+                                                                        [16:28]
+   <drmeister> Back when I implemented it it was an interpreted archaic lisp that
+            I was putting in there.
+   <scymtym> i have ignored it so far  [16:29]
+   <drmeister> There is another important difference between the OpenEye SMARTS
+            spec and what I did - I mentioned it before - it's how we label
+            atoms to recover them afterwards.
+   <drmeister> I used numbers after the tests - like C1C2C3[CH4]5  [16:30]
+   <drmeister> They use the colon operator (whatever they call it)
+   <drmeister> [C:1][C:2][C:3][CH4:5]
+   <drmeister> I'd like to switch to theirs.
+   <scymtym> i would have to check my notes
+   <scymtym> is that about the atom class or the #=, ## kind of thing for
+          describing loops?  [16:31]
+   <drmeister> It should be a minor modification of my parser - but I want to get
+            rid of my parser.
+   <drmeister> That was the problem.   My approach overlapped with how you
+            specify loops.
+   <frgo> Hello.  [16:32]
+   <drmeister> A four member ring is tested with C1CCCC1
+   <drmeister> Hi frgo
+   <scymtym> i currently interpret […:N] as a modifier specifying the atom
+          mass. is that right?  [16:33]
+   <drmeister> I overloaded the numbering to both test for loops and to label
+            atoms in matches.
+   <drmeister> No, that is incorrect.   The :N operator is to label the current
+            atom with the ID N.
+   <drmeister> Atomic mass is just [N]
+   <drmeister> So for carbon it would be [12]  [16:34]
+   <drmeister> Simply dropping the number into the square brackets indicates a
+            test for atomic mass
+   <drmeister> Let's say I want to recognize an amide bond...  [16:35]
+   <drmeister> https://i.imgur.com/KEfnNyj.png  [16:36]
+   <drmeister> That's the red atoms.
+   <drmeister> I would test every atom with this...
+   <scymtym> i'm following. trying to remember where i got the "[:N] means mass"
+          idea
+   <drmeister> [C:1]=[O:2]-[N:3]
+   <drmeister> Wait - that's not right  [16:37]
+   <drmeister> [C:1](=[O:2])-[N:3]
+   <drmeister> I'm rusty
+   <drmeister> If you applied that test to the red "C" atom it would return true
+            and a match object that you could use to recover atoms with ID 1,
+            2 and 3 (the C, the O and the N respectively)  [16:38]
+   <scymtym> like regex registers?  [16:39]
+   <scymtym> or capture groups, rather
+   <drmeister> Yeah capture groups - I was looking up regex registers.  [16:40]
+   <drmeister> Like in regex where you capture subexpressions that match.  [16:41]
+   <drmeister> Here you capture individual atoms.
+   <scymtym> Daylight Theory Manual, page 17 calls the construct "class". that's
+          probably what mislead me
+   <drmeister> My approach to use the ring notation (I think) was harmless
+            overloading.  [16:42]
+   <drmeister> Several of the manuals that I read at the time didn't even mention
+            it.
+   <drmeister> Here it just appears about 2/3 of the way down the document.
+   <drmeister> http://www.daylight.com/dayhtml/doc/theory/theory.smarts.html
+   <scymtym> also, in the same listing (page 17), [WEIGHT] doesn't seem to be
+          allowed  [16:43]
+   <drmeister> "class" is a poor choice of a name IMHO.  It may be more a more
+            appropriate term when you get into the SMIRKS language superset.
+                                                                        [16:45]
+   <scymtym> maybe  [16:46]
+   <drmeister> In the table at the bottom of page 23 it makes a bit more sense to
+            me that they call them "class"es.    They are distinguishing atoms
+            in terms of where they start and where they end up in a reaction.
+                                                                        [16:47]
+   <drmeister> Fundamentally we have our crappy human languages and we are trying
+            to apply them to these fundamental, universal things.
+   <Bike> can you have a capture group of multiple atoms, out of curiosity
+   <drmeister> No  [16:48]
+   <scymtym> i'm still confused about Daylight Theory Manual, page 17 which
+          mentions the class construct in the context of SMILES. isn't it only
+          applicable to SMARTS and "above"?
+   <drmeister> If there were a way to capture a group of atoms you would still
+            need to apply a test to get the individual atoms within in.
+                                                                        [16:49]
+   <drmeister> This confused me as well.   I didn't even know about the class
+            construct when I wrote my parser several years ago.
+   <drmeister> I think that the class construct was introduced to support SMIRKS
+            (where it is very important) and sort of back ported into SMARTS.
+                                                                        [16:51]
+   <scymtym> fair enough. but it makes no sense for SMILES, right?
+   <drmeister> SMARTS lets you recognize subgraphs within molecules.    It
+            becomes much more useful when you can capture atoms that are
+            recognized - if you have a language that can operate on those
+            atoms.  [16:53]
+   <drmeister> I could see a use for it in SMILES.
+   <drmeister> It would allow you to build a molecule with a SMILES string and
+            then get the new atoms that are labeled with the class operator.
+                                                                        [16:54]
+   <scymtym> ok, maybe my mental model of the sub/superset relations of the
+          languages and their respective uses is still wrong
+   <drmeister> Rather you could build a residue (part of a molecule) with a
+            SMILES string and then recover the atoms that were labeled with
+            the class operator and then connect it to another residue
+            constructed from another SMILES string.  [16:55]
+   <Bike> well you have capture groups in regexes even without replacement,
+          right.
+   <drmeister> No - I don't think your model is wrong.   There is a hierarchy.
+            You just pointed out an extension that would be very useful.
+   <drmeister> I don't think the SMILES standard uses  the class operator.
+                                                                        [16:56]
+   <scymtym> i thought SMILES was only for constructing, not matching. but i get
+          drmeister's idea of building something and being able to pull
+          certain parts out in a single operation
+   <drmeister> [C:1][C:2](c1cccccc1) could be used to build polystyrene polymers.
+            I'm certain that no existing SMILES parser will recognize that
+            string.  [16:57]
+   <drmeister> It would be useful for Cando.
+   <drmeister> Cando would build 100 of those and then connect the [C:2] atom of
+            each to the [C:1] atom of the next.  [16:58]
+   <scymtym> drmeister: at least the Daylight Theory Manual explicitly specifies
+          it for SMILES, on page 17. that's what i was trying to say the whole
+          time
+   <scymtym> hm, maybe they consider it an "extension for reactions". man, the
+          boundaries are really blurry with these things  [16:59]
+   <drmeister> Ok - if that was the manual 5-10 years ago when I wrote my parser
+            then I probably ignored it. I didn't recognize it for what it was
+            - a way to label atoms.  [17:00]
+   <drmeister> If it was available then the examples on page 18 probably confused
+            me - because they apply the labels to multiple atoms in a match.
+                                                                        [17:01]
+   <scymtym> drmeister: in any case, thanks for feedback. i think i can get a bit
+          further with that
+   <drmeister> It's not always a 1:1 map of atoms to labels.  It is often a many
+            to one.
+   <drmeister> Yeah - I probably looked at this:
+            [CH3:1][C:2](=[O:3])[O-:3].[Na+:4]   and said WTF?  That is NOT
+            what I need.  [17:02]
+   <drmeister> But if we constrain ourselves to use a 1:1 map we can use
+            [CH3:1][C:2](=[O:3])[O-:4].[Na+:5]  [17:03]
+   <drmeister> But we need to build a hash table of labels to lists of atoms.
+                                                                        [17:04]
+   <drmeister> All this stuff is much easier now that we have full Common Lisp
+            available.
+   <scymtym> yes, the two parsers will be around 100 lines each  [17:05]
+   <drmeister> Imagine doing this in Python.   The matching code has to be
+            written in C++ to be fast.  It would have to implement a
+            map<int,list> to map integer labels to lists of atoms.
+   <drmeister> Functions would need to be exposed to recover the lists and
+            iterate over them.  [17:06]
+   <drmeister> Memory management issues.
+   <drmeister> Bleh - just thinking about it exhausts me.
+   #+END_EXAMPLE

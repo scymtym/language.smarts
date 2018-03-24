@@ -1,0 +1,90 @@
+#+TITLE:    language.smarts README
+#+AUTHOR:   Jan Moringen
+#+EMAIL:    jmoringe@techfak.uni-bielefeld.de
+#+LANGUAGE: en
+
+#+OPTIONS:  num:nil
+#+SEQ_TODO: TODO STARTED | DONE
+
+* STARTED Introduction
+
+  This library provides parsers for the [[https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system][SMILES]] and [[https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification][SMARTS]] languages.
+
+* STARTED Tutorial
+
+  Parsing SMILES expressions:
+
+  #+BEGIN_SRC lisp :exports both :results value verbatim
+    (language.smiles.parser:parse "[C+3]=N" 'list)
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  (:CHAIN
+   (:ELEMENT
+    (((:BRACKETED-EXPRESSION
+       (:EXPRESSION
+        (((:ATOM
+           (:MODIFIER
+            (((:CHARGE NIL :WHICH :POSITIVE :VALUE 3 :BOUNDS (2 . 4)))))
+           :SYMBOL (:ATOM NIL :KIND :ORGANIC :SYMBOL "C" :BOUNDS (1 . 2)) :WEIGHT
+           NIL :CLASS NIL :BOUNDS (1 . 4)))))
+       :BOUNDS (0 . 5)))
+     ((:BOND (:ATOM (((:ATOM NIL :KIND :ORGANIC :SYMBOL "N" :BOUNDS (6 . 7)))))
+       :KIND :DOUBLE :BOUNDS (5 . 7))))))
+  NIL
+  T
+  #+end_example
+
+  Parsing SMARTS expressions:
+
+  #+BEGIN_SRC lisp :exports both :results value verbatim
+    (language.smarts.parser:parse "[*H3R2]/?N1" 'list)
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  (:CHAIN
+   (:ELEMENT
+    (((:BRACKETED-EXPRESSION
+       (:EXPRESSION
+        (((:BINARY-OPERATOR
+           (:OPERAND
+            (((:BINARY-OPERATOR
+               (:OPERAND
+                (((:ATOM NIL :KIND :WILDCARD :BOUNDS (1 . 2)))
+                 ((:ATOM NIL :TOTAL-HYDROGEN-COUNT 3 :BOUNDS (2 . 4)))))
+               :OPERATOR :IMPLICIT-AND :BOUNDS (1 . 4)))
+             ((:ATOM NIL :RING-BOND-COUNT 2 :BOUNDS (4 . 6)))))
+           :OPERATOR :IMPLICIT-AND :BOUNDS (1 . 6)))))
+       :BOUNDS (0 . 7)))
+     ((:BOND
+       (:ATOM
+        (((:LABELED
+           (:ATOM (((:ATOM NIL :KIND :ORGANIC :SYMBOL "N" :BOUNDS (9 . 10)))))
+           :LABEL 1 :BOUNDS (9 . 11)))))
+       :KIND :UP-OR-UNSPECIFIED :BOUNDS (7 . 11)))))
+   :BOUNDS (0 . 11))
+  NIL
+  T
+  #+end_example
+
+* TODO Dictionary
+
+* References
+
+  + https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system (SMILES)
+
+  + https://en.wikipedia.org/wiki/Smiles_arbitrary_target_specification (SMARTS)
+
+  + https://docs.eyesopen.com/toolkits/cpp/oechemtk/SMARTS.html
+
+  + http://www.daylight.com/cheminformatics/index.html
+
+  + http://www.daylight.com/dayhtml/doc/theory/index.pdf
+
+  + https://github.com/drmeister/cando/blob/dev/include/cando/chem/chemInfo.h#L1
+
+  + https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.cc#L1
+
+  + https://github.com/drmeister/cando/blob/dev/src/chem/msmarts_Parser.yy#L1

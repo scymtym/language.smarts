@@ -2,14 +2,14 @@
   :version    (:read-file-form "version-string.sexp")
   :depends-on ("alexandria"
 
-               "esrap"
+               (:version "esrap"                         "0.16")
 
-               "parser.common-rules" ; TODO version
-               "parser.common-rules.operators"
+               (:version "parser.common-rules"           "0.4")
+               (:version "parser.common-rules.operators" "0.4")
 
-               "architecture.builder-protocol"
+               (:version "architecture.builder-protocol" "0.9")
 
-               "language.smiles")
+               (:version "language.smiles"               (:read-file-form "version-string.sexp")))
 
   :components ((:module    "parser"
                 :pathname  "src/smarts/parser"

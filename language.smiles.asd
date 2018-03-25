@@ -2,11 +2,11 @@
   :version    (:read-file-form "version-string.sexp")
   :depends-on ("alexandria"
 
-               "esrap"
+               (:version "esrap"                         "0.16")
+                                                         
+               (:version "parser.common-rules"           "0.4")
 
-               "parser.common-rules" ; TODO version
-
-               "architecture.builder-protocol")
+               (:version "architecture.builder-protocol" "0.9"))
 
   :components ((:module    "parser"
                 :pathname  "src/smiles/parser"

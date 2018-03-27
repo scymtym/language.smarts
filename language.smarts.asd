@@ -15,7 +15,8 @@
                 :pathname  "src/smarts/parser"
                 :serial    t
                 :components ((:file       "package")
-                             (:file       "grammar"))))
+                             (:file       "grammar")
+                             (:file       "protocol"))))
 
   :in-order-to ((test-op (test-op "language.smarts/test"))))
 

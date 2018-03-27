@@ -3,7 +3,7 @@
   :depends-on ("alexandria"
 
                (:version "esrap"                         "0.16")
-                                                         
+
                (:version "parser.common-rules"           "0.4")
 
                (:version "architecture.builder-protocol" "0.9"))
@@ -13,6 +13,7 @@
                 :serial    t
                 :components ((:file       "package")
                              (:file       "variables")
+                             (:file       "protocol")
                              (:file       "grammar"))))
 
   :in-order-to ((test-op (test-op "language.smiles/test"))))

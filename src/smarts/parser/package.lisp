@@ -10,6 +10,13 @@
    #:alexandria
    #:esrap)
 
+  (:shadow
+   #:parse)
+
   (:local-nicknames
    (#:bp     #:architecture.builder-protocol)
-   (#:smiles #:language.smiles.parser)))
+   (#:smiles #:language.smiles.parser))
+
+  ;; Parser protocol
+  (:export
+   #:parse))

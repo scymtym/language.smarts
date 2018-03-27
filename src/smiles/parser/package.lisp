@@ -13,6 +13,9 @@
   (:local-nicknames
    (#:bp #:architecture.builder-protocol))
 
+  (:shadow
+   #:parse)
+
   ;; Variables
   (:export
    #:*atom-maps?*)
@@ -60,4 +63,8 @@
    #:bond-quadruple
    #:bond-aromatic
    #:bond-up
-   #:bond-down))
+   #:bond-down)
+
+  ;; Parser protocol
+  (:export
+   #:parse))

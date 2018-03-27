@@ -39,7 +39,7 @@
     (bp:node* (:bond :kind (or bond :single) :bounds (cons start end))
       (1 :atom atom))))
 
-(defrule atom-pattern
+(defrule atom-pattern ; TODO duplicated form SMILES?
     (and acyclic-atom-pattern (? parser.common-rules:integer-literal/decimal))
   (:destructure (atom label)
     (if label
@@ -56,9 +56,25 @@
 
 ;;; SMARTS 4.1 Atomic Primitives
 
+;;; There are no modifiers: 4.3 Logical Operators
+;;;
+;;; All atomic expressions which are not simple primitives must be
+;;; enclosed in brackets. The default operation is & (high precedence
+;;; "and"), i.e., two adjacent primitives without an intervening
+;;; logical operator must both be true for the expression (or
+;;; subexpression) to be true.
 (defrule modified-atom-pattern-body
-    (or atom-pattern/non-literal
-        smiles:modified-atom-body
+    (or smiles:atom-weight ; TODO this is just a number
+        smiles:atom-symbol
+
+        ; smiles:hydrogen-count
+        smiles:charge
+        smiles:chirality
+
+        atom-pattern/non-literal
+
+        smiles:atom-map-class
+
         recursive))
 
 (macrolet
@@ -130,23 +146,25 @@
 
 ;;; SMARTS 4.3 Logical Operators
 
-(macrolet ((define-operator-rule (name character
+(macrolet ((define-operator-rule (name expression
                                   &optional (value (make-keyword name)))
              (let ((rule-name (symbolicate '#:operator- name)))
                `(defrule ,rule-name
-                    ,character
+                    ,expression
                   (:constant ,value)))))
-  (define-operator-rule weak-and   #\; :and)
-  (define-operator-rule or         #\,)
-  (define-operator-rule strong-and #\& :and)
-  (define-operator-rule not        #\!))
+  (define-operator-rule weak-and     #\;   :weak-and)
+  (define-operator-rule or           #\,)
+  (define-operator-rule strong-and   #\&   :strong-and)
+  (define-operator-rule not          #\!)
+  (define-operator-rule implicit-and (and) :implicit-and))
 
 (parser.common-rules.operators:define-operator-rules
     (:skippable?-expression nil)
-  (2 weak-and-expression   operator-weak-and)
-  (2 or-expression         operator-or)
-  (2 strong-and-expression operator-strong-and)
-  (1 not-expression        operator-not)
+  (2 weak-and-expression     operator-weak-and)
+  (2 or-expression           operator-or)
+  (2 strong-and-expression   operator-strong-and)
+  (1 not-expression          operator-not)
+  (2 implicit-and-expression operator-implicit-and)
   modified-atom-pattern-body)
 
 ;;; SMARTS 4.4 Recursive SMARTS

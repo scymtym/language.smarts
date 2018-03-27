@@ -94,7 +94,7 @@
     parser.common-rules:integer-literal/decimal) ; TODO predicate for plusp. is this an integer?
 
 (defrule atom-modifier
-    (or hydrogen-count charge chiral))
+    (or hydrogen-count charge chirality))
 
 (defrule hydrogen-count ; TODO is this SMILES or SMARTS?
     (and "H" parser.common-rules:integer-literal/decimal)) ; TODO predicate for non-negative or positive
@@ -130,21 +130,21 @@
 
 ;;; Daylight Theory Manual 3.3.4 General Chiral Specification
 
-(defrule chiral
-    (or chiral/number chiral/repeat))
+(defrule chirality
+    (or chirality/number chirality/repeat))
 
-(defrule chiral/number
+(defrule chirality/number
     (and #\@ (? (or "TH" "AL" "SP" "TB" "OH"))
          parser.common-rules:integer-literal/decimal)
   (:function rest)
   (:destructure (class count &bounds start end)
-    (bp:node* (:chiral :class class :count count :bounds (cons start end)))))
+    (bp:node* (:chirality :class class :count count :bounds (cons start end)))))
 
-(defrule chiral/repeat
+(defrule chirality/repeat
     (+ #\@)
   (:function length)
   (:lambda (count &bounds start end)
-    (bp:node* (:chiral :count count :bounds (cons start end)))))
+    (bp:node* (:chirality :count count :bounds (cons start end)))))
 
 ;;; Daylight Theory Manual, page 17
 (defrule atom-map-class

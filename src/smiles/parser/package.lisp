@@ -46,7 +46,9 @@
 
    #:hydrogen-count
    #:charge
-   #:chiral)
+   #:chirality
+
+   #:atom-map-class)
 
   ;; Bond rules
   (:export

@@ -31,7 +31,7 @@
                "language.smiles")
 
   :components ((:module     "test"
-                :pathname   "test"
+                :pathname   "test/smiles"
                 :serial     t
                 :components ((:file       "package")))
 

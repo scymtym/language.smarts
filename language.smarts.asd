@@ -29,11 +29,12 @@
   :depends-on ("alexandria"
 
                "fiveam"
+               "parser.common-rules/test"
 
                "language.smarts")
 
   :components ((:module     "test"
-                :pathname   "test"
+                :pathname   "test/smarts"
                 :serial     t
                 :components ((:file       "package")))
 

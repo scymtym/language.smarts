@@ -39,9 +39,9 @@
 
 (defrule atom
     (and acyclic-atom (? parser.common-rules:integer-literal/decimal))
-  (:destructure (atom label)
+  (:destructure (atom label &bounds start end)
     (if label
-        (bp:node* (:labeled :label label)
+        (bp:node* (:labeled :label label :bounds (cons start end))
           (1 :atom atom))
         atom)))
 
@@ -59,18 +59,18 @@
 (defrule organic-atom-symbol ; TODO macro
     (or "Br" "B" "Cl" "C" "F" "I" "N" "O" "P" "S")
   (:lambda (symbol &bounds start end)
-    (bp:node* (:atom :symbol symbol :bounds (cons start end)))))
+    (bp:node* (:atom :kind :organic :symbol symbol :bounds (cons start end)))))
 
 (defrule aromatic-atom-symbol
     (or "br" "b" "cl" "c" "f" "i" "n" "o" "p" "s")
   (:lambda (symbol &bounds start end)
-    (bp:node* (:atom :symbol symbol :bounds (cons start end)))))
+    (bp:node* (:atom :kind :aromatic :symbol symbol :bounds (cons start end)))))
 
 ;; msmarts_Parser.yy:869
 (defrule inorganic-atom-symbol
     (or "Al" "Ca" "Co" "Cu" "Fe")
   (:lambda (symbol &bounds start end)
-    (bp:node* (:atom :symbol symbol :bounds (cons start end)))))
+    (bp:node* (:atom :kind :inorganic :symbol symbol :bounds (cons start end)))))
 
 ;;; Daylight Theory Manual 3.5 Atom expression
 ;;;
@@ -78,7 +78,10 @@
 ;;; modifiers.
 (defrule modified-atom
     (and #\[ modified-atom-body #\])
-  (:function second))
+  (:function second)
+  (:lambda (expression &bounds start end)
+    (bp:node* (:bracketed-expression :bounds (cons start end))
+      (1 :expression expression))))
 
 (defrule modified-atom-body
     (and (or (and atom-weight atom-symbol)

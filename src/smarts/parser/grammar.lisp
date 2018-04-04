@@ -30,7 +30,7 @@
       (* :element elements))))
 
 (defrule branch
-    (and #\( chain-pattern #\))
+    (and #\( chain-pattern #\)) ; TODO ast node for this?
   (:function second))
 
 (defrule bond-atom-pattern
@@ -41,9 +41,9 @@
 
 (defrule atom-pattern ; TODO duplicated form SMILES?
     (and acyclic-atom-pattern (? parser.common-rules:integer-literal/decimal))
-  (:destructure (atom label)
+  (:destructure (atom label &bounds start end)
     (if label
-        (bp:node* (:labeled :label label)
+        (bp:node* (:labeled :label label :bounds (cons start end))
           (1 :atom atom))
         atom)))
 
@@ -52,7 +52,10 @@
 
 (defrule modified-atom-pattern
     (and #\[ weak-and-expression #\])
-  (:function second))
+  (:function second)
+  (:lambda (expression &bounds start end)
+    (bp:node* (:bracketed-expression :bounds (cons start end))
+      (1 :expression expression))))
 
 ;;; SMARTS 4.1 Atomic Primitives
 
@@ -95,11 +98,13 @@
                                       'parser.common-rules:integer-literal/decimal))
                           (:function second)
                           (:lambda (value &bounds start end)
-                            `(:atom () ,',kind ,value :bounds ,(cons start end)))))
+                            (bp:node* (:atom ',kind value :bounds (cons start end))))))
                       ((nil)
                        `(defrule ,rule-name
                             ,expression
-                          (:constant '(:atom () :kind ,kind))))))))
+                          (:lambda (value &bounds start end)
+                            (declare (ignore value))
+                            (bp:node* (:atom :kind ',kind :bounds (cons start end))))))))))
            `(progn
               ,@(map 'list (curry #'apply #'process-clause) clauses)
               (defrule atom-pattern/non-literal (or ,@(nreverse rules))))))))

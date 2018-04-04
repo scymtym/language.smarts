@@ -67,7 +67,7 @@
 ;;; logical operator must both be true for the expression (or
 ;;; subexpression) to be true.
 (defrule modified-atom-pattern-body
-    (or smiles:atom-weight ; TODO this is just a number
+    (or smiles:atom-weight ; TODO this is just a number, i.e. (node* ) is missing
         smiles:atom-symbol
 
         ; smiles:hydrogen-count

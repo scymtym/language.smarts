@@ -22,7 +22,7 @@
       (chain))))
 
 (defrule chain
-    (* (or bond-atom branch))
+    (+ (or bond-atom branch))
   (:lambda (elements &bounds start end)
     (bp:node* (:chain :bounds (cons start end))
       (* :element elements))))

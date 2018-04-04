@@ -24,7 +24,7 @@
       (chain))))
 
 (defrule chain-pattern
-    (* (or bond-atom-pattern branch))
+    (+ (or bond-atom-pattern branch))
   (:lambda (elements &bounds start end)
     (bp:node* (:chain :bounds (cons start end))
       (* :element elements))))

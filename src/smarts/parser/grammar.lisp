@@ -14,20 +14,21 @@
 (cl:in-package #:language.smarts.parser)
 
 (defrule smarts
-    (and (? atom-pattern) (? chain-pattern))
-  (:destructure (atom chain)
-    (cond ; TODO
-      ((and atom chain)
-       (bp:node* (:chain)
-         (* :element (list* atom (bp:node-relation* :element chain)))))
-      (atom)
-      (chain))))
+    (and atom-pattern (? chain-elements))
+  (:destructure (atom elements &bounds start end)
+    (if elements
+        (bp:node* (:chain :bounds (cons start end))
+          (* :element (list* atom elements)))
+        atom)))
 
 (defrule chain-pattern
-    (+ (or bond-atom-pattern branch))
+    chain-elements
   (:lambda (elements &bounds start end)
     (bp:node* (:chain :bounds (cons start end))
       (* :element elements))))
+
+(defrule chain-elements
+    (+ (or bond-atom-pattern branch)))
 
 (defrule branch
     (and #\( chain-pattern #\)) ; TODO ast node for this?

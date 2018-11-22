@@ -17,8 +17,9 @@
    (#:bp     #:architecture.builder-protocol)
    (#:smiles #:language.smiles.parser))
 
-  ;; Recursive rule
+  ;; Exported rules
   (:export
+   #:atom-pattern
    #:recursive)
 
   ;; Parser protocol

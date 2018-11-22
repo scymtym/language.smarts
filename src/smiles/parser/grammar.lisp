@@ -94,7 +94,7 @@
       (* :modifier modifiers))))
 
 (defrule atom-weight
-    parser.common-rules:integer-literal/decimal) ; TODO predicate for plusp. is this an integer?
+    parser.common-rules::integer-literal/decimal/no-sign)
 
 (defrule atom-modifier
     (or hydrogen-count charge chirality))
@@ -116,7 +116,7 @@
                 (or ,rule-name/number ,rule-name/repeat))
 
             (defrule ,rule-name/number
-                (and ,character parser.common-rules:integer-literal/decimal)
+                (and ,character parser.common-rules::integer-literal/decimal/no-sign)
               (:function second)
               (:lambda (count &bounds start end)
                 (bp:node* (:charge :which ',value :value count

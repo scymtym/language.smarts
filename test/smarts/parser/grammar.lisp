@@ -28,7 +28,7 @@
                    (:expression
                     (((:binary-operator
                        (:operand (((:atom () :kind :organic :symbol "C" :bounds (1 . 2)))
-                                  (1)))
+                                  ((:atom-map-class () :class 1 :bounds (2 . 4)))))
                        :operator :implicit-and :bounds (1 . 4)))))
                    :bounds (0 . 5)))))))
 

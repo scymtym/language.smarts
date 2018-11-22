@@ -153,6 +153,8 @@
 (defrule atom-map-class
     (and #\: parser.common-rules::integer-literal/decimal/no-sign)
   (:function second)
+  (:lambda (class &bounds start end)
+    (bp:node* (:atom-map-class :class class :bounds (cons start end))))
   (:when *atom-maps?*))
 
 ;;; Daylight Theory Manual 3.2.2 Bonds

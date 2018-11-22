@@ -151,7 +151,7 @@
 
 ;;; Daylight Theory Manual, page 17
 (defrule atom-map-class
-    (and #\: parser.common-rules:integer-literal/decimal)
+    (and #\: parser.common-rules::integer-literal/decimal/no-sign)
   (:function second)
   (:when *atom-maps?*))
 

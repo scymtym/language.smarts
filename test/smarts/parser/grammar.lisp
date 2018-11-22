@@ -23,6 +23,13 @@
                         (((:atom () :kind :organic :symbol "C" :bounds (1 . 2)))
                          ((:charge () :which :positive :value 2 :bounds (2 . 4)))))
                        :operator :implicit-and :bounds (1 . 4)))))
+                   :bounds (0 . 5)))
+        ("[C:1]" '(:bracketed-expression
+                   (:expression
+                    (((:binary-operator
+                       (:operand (((:atom () :kind :organic :symbol "C" :bounds (1 . 2)))
+                                  (1)))
+                       :operator :implicit-and :bounds (1 . 4)))))
                    :bounds (0 . 5)))))))
 
 (test rule.recursive

@@ -30,7 +30,10 @@
                        (:operand (((:atom () :kind :organic :symbol "C" :bounds (1 . 2)))
                                   ((:atom-map-class () :class 1 :bounds (2 . 4)))))
                        :operator :implicit-and :bounds (1 . 4)))))
-                   :bounds (0 . 5)))))))
+                   :bounds (0 . 5)))
+        ("[Na]"  '(:bracketed-expression
+                   (:expression (((:atom () :kind :inorganic :symbol "Na" :bounds (1 . 3)))))
+                   :bounds (0 . 4)))))))
 
 (test rule.recursive
   "Smoke test for the `recursive' rule."

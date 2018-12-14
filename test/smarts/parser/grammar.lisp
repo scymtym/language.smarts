@@ -30,6 +30,16 @@
                          ((:charge () :which :positive :value 2 :bounds (2 . 4)))))
                        :operator :implicit-and :bounds (1 . 4)))))
                    :bounds (0 . 5)))
+        ("C1"    '(:binary-operator
+                   (:operand (((:atom () :kind :organic :symbol "C" :bounds (0 . 1)))
+                              ((:atom-map-class () :class 1 :bounds (1 . 2)))))
+                   :operator :implicit-and :bounds (0 . 2)))
+        ("[C]1"  '(:binary-operator
+                   (:operand (((:bracketed-expression
+                                (:expression (((:atom () :kind :organic :symbol "C" :bounds (1 . 2)))))
+                                :bounds (0 . 3)))
+                              ((:atom-map-class () :class 1 :bounds (3 . 4)))))
+                   :operator :implicit-and :bounds (0 . 4)))
         ("[C:1]" '(:bracketed-expression
                    (:expression
                     (((:binary-operator

@@ -51,7 +51,8 @@
    #:charge
    #:chirality
 
-   #:atom-map-class)
+   #:atom-map-class
+   #:atom-map-class/no-colon)
 
   ;; Bond rules
   (:export

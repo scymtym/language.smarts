@@ -150,12 +150,19 @@
     (bp:node* (:chirality :count count :bounds (cons start end)))))
 
 ;;; Daylight Theory Manual, page 17
-(defrule atom-map-class
-    (and #\: parser.common-rules::integer-literal/decimal/no-sign)
-  (:function second)
-  (:lambda (class &bounds start end)
-    (bp:node* (:atom-map-class :class class :bounds (cons start end))))
-  (:when *atom-maps?*))
+(macrolet ((define-atom-map-class-rule (name &body expression-and-options)
+             `(defrule ,name
+                  ,@expression-and-options
+                (:lambda (class &bounds start end)
+                  (bp:node* (:atom-map-class :class class :bounds (cons start end))))
+                (:when *atom-maps?*))))
+
+  (define-atom-map-class-rule atom-map-class
+      (and #\: parser.common-rules::integer-literal/decimal/no-sign)
+    (:function second))
+
+  (define-atom-map-class-rule atom-map-class/no-colon
+    parser.common-rules::integer-literal/decimal/no-sign))
 
 ;;; Daylight Theory Manual 3.2.2 Bonds
 

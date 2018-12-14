@@ -41,11 +41,16 @@
       (1 :atom atom))))
 
 (defrule atom-pattern ; TODO duplicated from SMILES?
-    (and acyclic-atom-pattern (? parser.common-rules:integer-literal/decimal))
-  (:destructure (atom label &bounds start end)
-    (if label
-        (bp:node* (:labeled :label label :bounds (cons start end))
-          (1 :atom atom))
+    ;; The trailing integer is an atom map class, but in contrast to
+    ;; `language.simles.parser:atom-map-class', there is no #\:
+    ;; preceding the integer.
+    (and acyclic-atom-pattern (? smiles:atom-map-class/no-colon))
+  (:destructure (atom class &bounds start end)
+    (if class
+        (bp:node* (:binary-operator :operator :implicit-and
+                                    :bounds   (cons start end))
+          (1 :operand atom)
+          (1 :operand class))
         atom)))
 
 (defrule acyclic-atom-pattern

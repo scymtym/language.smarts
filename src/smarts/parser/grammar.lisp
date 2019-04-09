@@ -157,17 +157,17 @@
 
 ;;; SMARTS 4.3 Logical Operators
 
-(macrolet ((define-operator-rule (name expression
-                                  &optional (value (make-keyword name)))
-             (let ((rule-name (symbolicate '#:operator- name)))
+(macrolet ((define-operator-rule (name expression)
+             (let ((rule-name (symbolicate '#:operator- name))
+                   (value     (make-keyword name)))
                `(defrule ,rule-name
                     ,expression
                   (:constant ,value)))))
-  (define-operator-rule weak-and     #\;   :weak-and)
+  (define-operator-rule weak-and     #\;)
   (define-operator-rule or           #\,)
-  (define-operator-rule strong-and   #\&   :strong-and)
+  (define-operator-rule strong-and   #\&)
   (define-operator-rule not          #\!)
-  (define-operator-rule implicit-and (and) :implicit-and))
+  (define-operator-rule implicit-and (and)))
 
 (parser.common-rules.operators:define-operator-rules
     (:skippable?-expression nil)

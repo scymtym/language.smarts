@@ -1,6 +1,6 @@
 ;;;; package.lisp --- Package definition for the smarts.parser module.
 ;;;;
-;;;; Copyright (C) 2018 Jan Moringen
+;;;; Copyright (C) 2018, 2019 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -20,6 +20,7 @@
   ;; Exported rules
   (:export
    #:atom-pattern
+   #:bond-pattern
    #:recursive)
 
   ;; Parser protocol

@@ -1,6 +1,6 @@
 ;;;; grammar.lisp --- Tests for the SMARTS grammar.
 ;;;;
-;;;; Copyright (C) 2018 Jan Moringen
+;;;; Copyright (C) 2018, 2019 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -50,6 +50,17 @@
         ("[Na]"  '(:bracketed-expression
                    (:expression (((:atom () :kind :inorganic :symbol "Na" :bounds (1 . 3)))))
                    :bounds (0 . 4)))))))
+
+(test rule.bond-pattern
+  "Smoke test for the `bond-pattern' rule."
+
+  (architecture.builder-protocol:with-builder ('list)
+    (parses-are (bond-pattern)
+      ("."   :none)
+
+      ("~~"  :wildcard)
+      ("/?"  :up-or-unspecified)
+      ("\\?" :down-or-unspecified))))
 
 (test rule.recursive
   "Smoke test for the `recursive' rule."

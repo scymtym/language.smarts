@@ -59,6 +59,7 @@
       ("."   :none)
 
       ("~~"  :wildcard)
+      ("@"   :same-ring)
       ("/?"  :up-or-unspecified)
       ("\\?" :down-or-unspecified))))
 

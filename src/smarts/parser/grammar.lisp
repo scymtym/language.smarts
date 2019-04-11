@@ -1,6 +1,6 @@
 ;;;; grammar.lisp --- Grammar for the SMARTS language.
 ;;;;
-;;;; Copyright (C) 2018 Jan Moringen
+;;;; Copyright (C) 2018, 2019 Jan Moringen
 ;;;;
 ;;;; Author: Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
 
@@ -152,6 +152,7 @@
               (defrule bond-pattern/non-literal (or ,@(nreverse rules))))))))
   (define-rules
     (wildcard            #\~)
+    (same-ring           #\@) ; added in SMARTS 4.6
     (up-or-unspecified   "/?")
     (down-or-unspecified "\\?")))
 

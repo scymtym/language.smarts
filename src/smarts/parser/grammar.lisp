@@ -124,7 +124,7 @@
     (total-hydrogen-count    #\H :parameter &optional)
     (implicit-hydrogen-count #\h :parameter &optional)
     (ring-bond-count         #\R :parameter &optional)
-    ;; TODO allow x?
+    (ring-connectivity       #\x :parameter &optional)
     (smallest-ring-size      #\r :parameter &optional)
     (valence                 #\v :parameter t)
     (connectivity            #\X :parameter t)

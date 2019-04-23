@@ -14,6 +14,7 @@
   (let ((language.smiles.parser:*atom-maps?* t))
     (architecture.builder-protocol:with-builder ('list)
       (parses-are (atom-pattern)
+        ;; Bracketed
         ("[C++]" '(:bracketed-expression
                    (:expression
                     (((:binary-operator
@@ -49,6 +50,13 @@
                    :bounds (0 . 5)))
         ("[Na]"  '(:bracketed-expression
                    (:expression (((:atom () :kind :inorganic :symbol "Na" :bounds (1 . 3)))))
+                   :bounds (0 . 4)))
+        ;; Non-literal patterns
+        ("[x]"   '(:bracketed-expression
+                   (:expression (((:atom () :ring-connectivity nil :bounds (1 . 2)))))
+                   :bounds (0 . 3)))
+        ("[x2]"   '(:bracketed-expression
+                   (:expression (((:atom () :ring-connectivity 2 :bounds (1 . 3)))))
                    :bounds (0 . 4)))))))
 
 (test rule.bond-pattern

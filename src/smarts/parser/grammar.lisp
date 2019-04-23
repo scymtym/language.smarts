@@ -104,7 +104,7 @@
                                       'parser.common-rules:integer-literal/decimal))
                           (:function second)
                           (:lambda (value &bounds start end)
-                            (bp:node* (:atom ',kind value :bounds (cons start end))))))
+                            (bp:node* (:atom ,kind value :bounds (cons start end))))))
                       ((nil)
                        `(defrule ,rule-name
                             ,expression
